@@ -1,0 +1,14 @@
+Websites Used:
+
+Github-Various, including but not limited to:
+	https://github.com/jyothiare/Enron-Final-Project/blob/master/Enron%20Final%20Project.ipynb
+
+SciKitLearn-various, as mentioned in the Udacity course
+
+Stack Overflow 
+	https://stackoverflow.com/questions/44689546/how-to-print-out-a-dictionary-nicely-in-python/44689597
+	https://stackoverflow.com/questions/36933795/python-getting-min-max-values-from-nested-dictionary
+
+https://www.tutorialspoint.com/python_pandas/python_pandas_dataframe.htm
+
+“I hereby confirm that this submission is my work. I have cited above the origins of any parts of the submission that were taken from Websites, books, forums, blog posts, github repositories, etc.
