@@ -8,6 +8,7 @@ import sys
 import pickle
 sys.path.append("../tools/")
 import matplotlib.pyplot as plt
+
 import pprint
 import numpy as np
 from feature_format import featureFormat, targetFeatureSplit
@@ -104,9 +105,7 @@ pprint.pprint (features_list_n)
 my_dataset = data_dict
 
 
-### Extract features and labels from dataset for local testing
-data = featureFormat(my_dataset, features_list_n, sort_keys = True)
-labels, features = targetFeatureSplit(data)
+
 
 
 
@@ -162,6 +161,7 @@ for feature in features_list_n:
 # In[8]:
 
 
+'''
 def findKbestFeatures(data_dict, features_list_n, k):
     from sklearn.feature_selection import f_classif
     data = featureFormat(data_dict, features_list_n)
@@ -170,16 +170,45 @@ def findKbestFeatures(data_dict, features_list_n, k):
     k_best = SelectKBest(f_classif, k=k)
     k_best.fit(features, labels)
     scores = k_best.scores_
+    return k_best_features
     unsorted_pairs = zip(features_list[1:], scores)
     sorted_pairs = list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))
     print("sorted_pairs", sorted_pairs)
     k_best_features = dict(sorted_pairs[:k])
+'''
 
-    return k_best_features
     
 
 
-# In[9]:
+# In[12]:
+
+
+### Extract features and labels from dataset for local testing
+data = featureFormat(my_dataset, features_list_n, sort_keys = True)
+labels, features = targetFeatureSplit(data)
+
+
+# In[18]:
+
+
+def skipOne(elem):
+    return elem[1]
+from sklearn.feature_selection import SelectKBest, f_classif
+selector = SelectKBest(f_classif, k = 5)
+selector.fit(features, labels)
+scores = zip(features_list_n[1:], selector.scores_)
+sorted_scores = sorted(scores, key = skipOne, reverse = True)
+pprint.pprint('SelectKBest scores: ')
+pprint.pprint( sorted_scores)
+all_features =  features_list + [(i[0]) for i in sorted_scores[0:20]]
+pprint.pprint( all_features)
+kBest_features = features_list + [(i[0]) for i in sorted_scores[0:10]]
+pprint.pprint( 'KBest')
+pprint.pprint( kBest_features)
+
+
+
+# In[14]:
 
 
 
@@ -187,7 +216,7 @@ from sklearn.cross_validation import train_test_split
 features_train, features_test, labels_train, labels_test =     train_test_split(features, labels, test_size=0.3, random_state=42)
 
 
-# In[10]:
+# In[15]:
 
 
 ### Task 4: Try a varity of classifiers
@@ -197,67 +226,6 @@ features_train, features_test, labels_train, labels_test =     train_test_split(
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Example starting point. Try investigating other evaluation techniques!
-'''
-from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
-
-# Provided to give you a starting point. Try a variety of classifiers.
-from sklearn.naive_bayes import GaussianNB
-from time import time
-clf = GaussianNB()
-
-# train
-t0 = time()
-clf.fit(features_train, labels_train)
-print "\ntraining time:", round(time()-t0, 3), "s"
-
-# predict
-t0 = time()
-pred = clf.predict(features_test)
-print "predicting time:", round(time()-t0, 3), "s"
-
-accuracy = accuracy_score(pred, labels_test)
-
-print '\naccuracy = {0}'.format(accuracy)
-'''
-
-
-# In[11]:
-
-
-'''
-from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
-
-
-from sklearn import tree
-from time import time
-from sklearn.model_selection import GridSearchCV
-clf = tree.DecisionTreeClassifier()
-dt_param = {'criterion':('gini', 'entropy'),
-'splitter':('best','random')}
-dt_grid_search = GridSearchCV(estimator = clf, param_grid = dt_param)
-# train
-t0 = time()
-clf.fit(features_train, labels_train)
-print "\ntraining time:", round(time()-t0, 3), "s"
-
-# predict
-t0 = time()
-pred = clf.predict(features_test)
-print "predicting time:", round(time()-t0, 3), "s"
-
-accuracy = accuracy_score(pred, labels_test)
-
-print '\naccuracy = {0}'.format(accuracy)
-
-'''
-
-
-# In[12]:
-
 
 from time import time
 
@@ -332,7 +300,7 @@ def adaboost_clf(features_train, features_test, labels_train, labels_test):
     return clf
 
 
-# In[13]:
+# In[16]:
 
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
@@ -349,7 +317,7 @@ clf = decision_tree_clf(features_train, features_test, labels_train, labels_test
 #clf = adaboost_clf(features_train, features_test, labels_train, labels_test)
 
 
-# In[14]:
+# In[17]:
 
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
